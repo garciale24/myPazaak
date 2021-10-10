@@ -1,6 +1,6 @@
 import random
 import time
-from typing import Callable, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 class PazaakState:
     def __init__(self, player: int) -> None:
@@ -10,15 +10,18 @@ class PazaakState:
         self.display: Callable[[], PazaakState] = \
             lambda: PazaakState._display(\
                 self.P1setVal, self.P2setVal, self.P1gamesWon, self.P2gamesWon,\
-                     self.P1stillPlaying, self.P2stillPlaying, self.P1boardCards, self.P2boardCards, self.P1sideCards)
+                     self.P1stillPlaying, self.P2stillPlaying, self.P1boardCards,\
+                          self.P2boardCards, self.P1sideCards)
         self.P1gamesWon: int = 0
         self.P2gamesWon: int = 0
         self.P1stillPlaying: int = 1
         self.P2stillPlaying: int = 1
         self.P1boardCards: list[int] = []
         self.P2boardCards: list[int] = []
-        self.P1sideCards: list[int] = []
-        self.P2sideCards: list[int] = []
+        self.P1sideCards: list[list[int]] = []
+        self.P2sideCards: list[list[int]] = []
+        self.createSideDeck: Callable[[list[list[int]]], PazaakState] = \
+            lambda sideDeck: PazaakState._side_card_pop(sideDeck)
         self.P1setVal: int = 0
         self.P2setVal: int = 0
         self.util: Callable[[int, int], PazaakState] = \
@@ -26,11 +29,26 @@ class PazaakState:
         self.traverse: Callable[[int], PazaakState] = \
             lambda index: PazaakState._performMove(player, index)
         self.whoWon: Callable[[], PazaakState] = \
-            lambda: PazaakState._check_win(\
-                PazaakState._get_utility(self.P1stillPlaying, self.P2stillPlaying), self.P1setVal, self.P2setVal)
+            lambda: PazaakState._check_win(PazaakState._get_utility\
+                (self.P1stillPlaying, self.P2stillPlaying), self.P1setVal, self.P2setVal)
         self.nextCard: Callable[[], PazaakState] = \
             lambda: PazaakState._next_card()
 
+    @staticmethod
+    def _side_card_pop(sideCards: List[int]) -> None:
+        i: int = 0
+        randint: int = 0
+        randint2: int = 0
+        while i < 4:
+            randint = 0
+            randint2 = 0
+            while randint == 0: randint = random.randrange(-5, 5) 
+            while randint2 == 0: randint2 = random.randrange(-10, 10)
+            if randint2 == randint: sideCards.append([randint, -1*randint])
+            else: sideCards.append([randint, randint])
+            i += 1
+        return None
+        
     @staticmethod
     def _display(p1sval: int, p2sval: int, p1gwon: int, p2gwon: int,\
          p1splay: int, p2splay: int, p1bcards: int, p2bcards: int, p1scards: int) -> str:
@@ -57,166 +75,127 @@ class PazaakState:
 
     @staticmethod
     def _get_utility(p1sp: int, p2sp: int) -> int:
-        if p1sp == 1 and p2sp == 1:
-            return 0
-        elif p1sp == 0 and p2sp == 1:
-            return 2
-        elif p1sp == 1 and p2sp == 0:
-            #print("yyo")
-            return 1    
+        if p1sp == 1 and p2sp == 1: return 0
+        elif p1sp == 0 and p2sp == 1: return 2
+        elif p1sp == 1 and p2sp == 0: return 1    
         return 3
 
-    # util, p1 set val, p2 set val
     @staticmethod
     def _check_win(util: int, p1sv: int, p2sv) -> int:
-        #print("okk")
-        #print(util, p1sv, p2sv)
         if util == 3:
-            if p2sv > 20:
-                return 1
-            if p1sv > 20:
-                return 2
-            if p1sv > p2sv:
-                return 1
-            if p1sv < p2sv:
-                return 2
-            if p1sv == p2sv:
-                return -1
-            #print("util3", p1sv, p2sv)
+            if p2sv > 20: return 1
+            if p1sv > 20: return 2
+            if p1sv > p2sv: return 1
+            if p1sv < p2sv: return 2
+            if p1sv == p2sv: return -1
         elif util == 0:
-            # print("yo")
-            if p2sv > 20:
-                return 1
-            if p1sv > 20:
-                return 2
-            #print("util0", p1sv, p2sv)
+            if p2sv > 20: return 1
+            if p1sv > 20: return 2
         elif util == 1:
-            if p1sv > 20:
-                return 2
-            if p2sv > 20:
-                return 1
-            if p1sv > p2sv:
-                return 1
-            
-            #print("util1", p1sv, p2sv)
+            if p1sv > 20: return 2
+            if p2sv > 20: return 1
+            if p1sv > p2sv: return 1            
         elif util == 2:
-            if p2sv > 20:
-                return 1
-            if p1sv > 20:
-                return 2
-            if p1sv < p2sv:
-                return 2
-            #print("util2", p1sv, p2sv)
-        #print("returns")
+            if p2sv > 20: return 1
+            if p1sv > 20: return 2
+            if p1sv < p2sv: return 2
         return 0
+
+def player1_human_auto(pazaakGame: PazaakState, nextCard: int) -> None:
+    if pazaakGame.P1stillPlaying == 1:
+        pazaakGame.P1boardCards.append(nextCard)
+        pazaakGame.P1setVal += nextCard
+        if pazaakGame.P1setVal >= 18: pazaakGame.P1stillPlaying = 0
+    pazaakGame.player = 2 
+    return None
+
+def player2_AI_auto(pazaakGame: PazaakState, nextCard: int) -> None:
+    i: int = 0
+    lencond: int = len(pazaakGame.P2sideCards)
+    if pazaakGame.P2stillPlaying == 1:
+        pazaakGame.P2boardCards.append(nextCard)
+        pazaakGame.P2setVal += nextCard
+        if pazaakGame.P2setVal >= 18: pazaakGame.P2stillPlaying = 0
+        while i < lencond:
+            i += 1
+            if player2_playSideCard(pazaakGame, i-1, 0) == 1: break
+            if pazaakGame.P2sideCards[i-1][0] == pazaakGame.P2sideCards[i-1][1]: continue
+            if player2_playSideCard(pazaakGame, i-1, 1) == 1: break
+    pazaakGame.player = 1 
+    return None
+
+def monte_carlo_algorithm(pazaakGame: PazaakState) -> int:
+    return 0
+
+def player2_playSideCard(pazaakGame: PazaakState, i: int, j: int) -> int:
+    val: int = 0
+    val = pazaakGame.P2sideCards[i][j] + pazaakGame.P2setVal
+    if val >= 18 and val <= 20:
+        if val > pazaakGame.P2setVal or pazaakGame.P2setVal > 20:
+            pazaakGame.P2setVal = val
+            pazaakGame.P2sideCards.pop(i)
+            pazaakGame.P2stillPlaying = 0
+            return 1
+    return 0
+
+def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
+    i: int = 0
+    lencond: int = len(pazaakGame.P2sideCards)
+    if pazaakGame.P2stillPlaying == 1:
+        pazaakGame.P2boardCards.append(nextCard)
+        pazaakGame.P2setVal += nextCard
+        if pazaakGame.P2setVal == 20: 
+            pazaakGame.P2stillPlaying = 0
+            return None
+        if monte_carlo_algorithm(pazaakGame) != 1:
+            if pazaakGame.P2setVal >= 18: pazaakGame.P2stillPlaying = 0
+            while i < lencond:
+                i += 1
+                if player2_playSideCard(pazaakGame, i-1, 0) == 1: break
+                if pazaakGame.P2sideCards[i-1][0] == pazaakGame.P2sideCards[i-1][1]: continue
+                if player2_playSideCard(pazaakGame, i-1, 1) == 1: break
+    pazaakGame.player = 1 
+    return None
+
+def player1_move() -> None:
+    return None
+
+def player1_human(pazaakGame: PazaakState, nextCard: int) -> None:
+    if pazaakGame.P1stillPlaying == 1:
+        pazaakGame.P1boardCards.append(nextCard)
+        pazaakGame.P1setVal += nextCard
+        if pazaakGame.P1setVal >= 20: pazaakGame.P1stillPlaying = 0
+        else: player1_move()
+    pazaakGame.player = 2 
+    return None
 
 def main() -> None:
     j: int = 0
-    i: int = 0
-    k: int = 1
+    k: int = 2
     p1wins: int = 0
     p2wins: int = 0
     ties: int = 0
     while j < 100000:
-        if k == 1:
-            k = 2
-        elif k == 2:
-            k = 1
+    #while (p1wins < 3) and (p2wins < 3):
+        if k == 1: k = 2
+        elif k == 2: k = 1
         pazaakGame = PazaakState(k)
-        while i < 4:
-            pazaakGame.P1sideCards.append(random.randrange(-5, 5))
-            i += 1
-        i = 0
-        while i < 4:
-            pazaakGame.P2sideCards.append(random.randrange(-5, 5))
-            i += 1
-        #print(pazaakGame.P1sideCards)
-        #print(pazaakGame.P2sideCards)
-
-        #print("My Pazaak")
-        #i: int = 0
-        
-        #while i < 10:
-        #    print(pazaakGame.nextCard())
-        #    i += 1
-        
-        #pazaakGame.display()
-        endCond: int = pazaakGame.whoWon()
-
-
+        pazaakGame.createSideDeck(pazaakGame.P1sideCards)
+        pazaakGame.createSideDeck(pazaakGame.P2sideCards)
+        endCond: int = 0
         while endCond == 0:
-            #print(pazaakGame.player, pazaakGame.P1setVal, pazaakGame.P2setVal, pazaakGame.util())
-
-
             nextCard: int = pazaakGame.nextCard()
-
-
-            if pazaakGame.player == 1:
-                if pazaakGame.P1stillPlaying == 1:
-                    
-                    pazaakGame.P1boardCards.append(nextCard)
-                    pazaakGame.P1setVal += nextCard
-                    if pazaakGame.P1setVal >= 20:
-                        pazaakGame.P1stillPlaying = 0
-                    #print("p1: ", pazaakGame.P1setVal)
-                    #print("p1: ", pazaakGame.P1boardCards)
-
-                pazaakGame.player = 2
-
-                
-
-            elif pazaakGame.player == 2:
-                if pazaakGame.P2stillPlaying == 1:
-                    pazaakGame.P2boardCards.append(nextCard)
-                    pazaakGame.P2setVal += nextCard
-                    #print("p2: ", pazaakGame.P2setVal)
-                    #print("p2: ", pazaakGame.P2boardCards)
-                    if pazaakGame.P2setVal >= 20:
-                        pazaakGame.P2stillPlaying = 0
-                        
-                        i = 0
-                        val: int = 0
-                        lencond: int = len(pazaakGame.P2sideCards)
-                        while i < lencond:
-                            val = pazaakGame.P2sideCards[i] + pazaakGame.P2setVal
-                            if val >= 18 and val <= 20:
-                                #print(pazaakGame.P2setVal + pazaakGame.P2sideCards[i])
-
-                                pazaakGame.P2setVal += pazaakGame.P2sideCards[i]
-                                pazaakGame.P2sideCards.pop(i)
-                                i = lencond
-                                #print(pazaakGame.P2setVal)
-                                #time.sleep(10)
-                                pazaakGame.P2stillPlaying = 0
-
-                            i += 1
-                        
-                        
-                    if pazaakGame.P2setVal >= 18:
-                        pazaakGame.P2stillPlaying = 0
-                pazaakGame.player = 1        
-                
-
+            if pazaakGame.player == 1: player1_human(pazaakGame, nextCard)
+            elif pazaakGame.player == 2: player2_AI(pazaakGame, nextCard)
             endCond = pazaakGame.whoWon()
-        #print(endCond)
-            if endCond == 1:
-                p1wins += 1
-                #print(pazaakGame.P1setVal, pazaakGame.P1boardCards, "  |  ", pazaakGame.P2setVal, pazaakGame.P2boardCards, pazaakGame.P2sideCards)
-
-            elif endCond == 2:
-                #print(pazaakGame.P1setVal, pazaakGame.P1boardCards, "  |  ", pazaakGame.P2setVal, pazaakGame.P2boardCards, pazaakGame.P2sideCards)
-
-                p2wins += 1
-            elif endCond == -1:
-                ties += 1
-        #print(pazaakGame.P1setVal, pazaakGame.P1boardCards, "  |  ", pazaakGame.P2setVal, pazaakGame.P2boardCards, pazaakGame.P2sideCards)
-        i = 0
+            if endCond == 1: p1wins += 1
+            elif endCond == 2: p2wins += 1
+            elif endCond == -1: ties += 1
         j += 1
     print("p1wins: ", p1wins)
     print("p2wins: ", p2wins)
     print("ties: ", ties)
-
-
+    return None
 
 if __name__ == "__main__":
     main()
