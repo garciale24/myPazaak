@@ -117,7 +117,7 @@ def main() -> None:
     p1wins: int = 0
     p2wins: int = 0
     ties: int = 0
-    while j < 10000:
+    while j < 100000:
         if k == 1:
             k = 2
         elif k == 2:
@@ -179,7 +179,7 @@ def main() -> None:
                         lencond: int = len(pazaakGame.P2sideCards)
                         while i < lencond:
                             val = pazaakGame.P2sideCards[i] + pazaakGame.P2setVal
-                            if val >= 19 and val <= 20:
+                            if val >= 18 and val <= 20:
                                 #print(pazaakGame.P2setVal + pazaakGame.P2sideCards[i])
 
                                 pazaakGame.P2setVal += pazaakGame.P2sideCards[i]
@@ -192,7 +192,7 @@ def main() -> None:
                             i += 1
                         
                         
-                    if pazaakGame.P2setVal >= 17:
+                    if pazaakGame.P2setVal >= 18:
                         pazaakGame.P2stillPlaying = 0
                 pazaakGame.player = 1        
                 
