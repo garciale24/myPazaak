@@ -4,6 +4,7 @@ import time
 from typing import Any, Callable, List, Optional, Tuple
 
 STAND: str = "stand"
+YES: str = "yes"
 
 
 class PazaakState:
@@ -182,11 +183,71 @@ def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
     pazaakGame.player = 1 
     return None
 
-def player1_move() -> None:
+def player1_move(pazaakGame: PazaakState) -> None:
     p1input: Optional[Any] = input("Enter input: " )
+    poppedCard: int = 0
 
 
-    if p1input == STAND:print(p1input)
+    if str(p1input) == STAND: pazaakGame.P1stillPlaying = 0
+    elif p1input == "": return None
+    elif int(p1input) == -1:
+        val = pazaakGame.P1sideCards[0][1] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(0)
+        pazaakGame.P1boardCards.append(poppedCard[1])
+    elif int(p1input) == 1:
+        val = pazaakGame.P1sideCards[0][0] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(0)
+        pazaakGame.P1boardCards.append(poppedCard[0])
+    elif int(p1input) == -2:
+        val = pazaakGame.P1sideCards[1][1] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(1)
+        pazaakGame.P1boardCards.append(poppedCard[1])
+    elif int(p1input) == 2:
+        val = pazaakGame.P1sideCards[1][0] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(1)
+        pazaakGame.P1boardCards.append(poppedCard[0])
+    elif int(p1input) == -3:
+        val = pazaakGame.P1sideCards[2][1] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(2)
+        pazaakGame.P1boardCards.append(poppedCard[1])
+    elif int(p1input) == 3:
+        val = pazaakGame.P1sideCards[2][0] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(2)
+        pazaakGame.P1boardCards.append(poppedCard[0])
+    elif int(p1input) == -4:
+        val = pazaakGame.P1sideCards[3][1] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(3)
+        pazaakGame.P1boardCards.append(poppedCard[1])
+    elif int(p1input) == 4:
+        val = pazaakGame.P1sideCards[3][0] + pazaakGame.P1setVal
+        pazaakGame.P1setVal = val
+        p1input2: Optional[Any] = input("stand?: (yes/no)" )
+        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
+        poppedCard = pazaakGame.P1sideCards.pop(3)
+        pazaakGame.P1boardCards.append(poppedCard[0])
+    print(p1input)
+    #pazaakGame.display()
 
 
     return None
@@ -195,8 +256,10 @@ def player1_human(pazaakGame: PazaakState, nextCard: int) -> None:
     if pazaakGame.P1stillPlaying == 1:
         pazaakGame.P1boardCards.append(nextCard)
         pazaakGame.P1setVal += nextCard
+        pazaakGame.display()
+
         if pazaakGame.P1setVal >= 20: pazaakGame.P1stillPlaying = 0
-        else: player1_move()
+        else: player1_move(pazaakGame)
     pazaakGame.player = 2 
     return None
 
@@ -219,8 +282,10 @@ def main() -> None:
             pazaakGame.display()
 
             nextCard: int = pazaakGame.nextCard()
+
             if pazaakGame.player == 1: player1_human(pazaakGame, nextCard)
             elif pazaakGame.player == 2: player2_AI(pazaakGame, nextCard)
+            pazaakGame.display()
 
             endCond = pazaakGame.whoWon()
             if endCond == 1: 
@@ -232,7 +297,6 @@ def main() -> None:
             elif endCond == -1: 
                 pazaakGame.ties+=1
                 ties += 1
-            pazaakGame.display()
         pazaakGame.reset()
         j += 1
     print("p1wins: ", p1wins)
