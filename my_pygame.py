@@ -31,7 +31,17 @@ PLUSFIVE: pygame = pygame.transform.scale(PLUS5, (80, 80))
 MOUSE_X: int = 0
 MOUSE_Y: int = 0
 
-
+P2_BOARD_DIS: List[Tuple[int]] = [
+    (720, 60),
+    (630, 60),
+    (540, 60),
+    (720, 150),
+    (630, 150),
+    (540, 150),
+    (720, 240),
+    (630, 240),
+    (540, 240)
+]
 
 P1_BOARD_DIS: List[Tuple[int]] = [
     (100, 60),
@@ -78,6 +88,8 @@ def draw_window(pazaakGame: PazaakState) -> None:
 
     img2 = font.render('Player 2: A.I.', True, BLACK)
     WIN.blit(img2, (470, 20))
+    img2_1 = font.render('Player 2 Set Total: ' + str(pazaakGame.P2setVal), True, BLACK)
+    WIN.blit(img2_1, (470, 440))
 
     radius = 15
     pygame.draw.circle(WIN, RED, (50, 135), radius)
@@ -103,13 +115,18 @@ def draw_window(pazaakGame: PazaakState) -> None:
 
     pygame.draw.line(WIN, BLACK, (450, 495), (450, 350), 5)
 
-
+    i = 0
     while i < len(pazaakGame.P1boardCards):
         card = get_card(pazaakGame.P1boardCards[i])
         WIN.blit(card, (P1_BOARD_DIS[i]))
         i += 1
 
 
+    i = 0
+    while i < len(pazaakGame.P2boardCards):
+        card = get_card(pazaakGame.P2boardCards[i])
+        WIN.blit(card, (P2_BOARD_DIS[i]))
+        i += 1
     #WIN.blit(PLUSFIVE, (100, 60))
     #WIN.blit(PLUSFIVE, (190, 60))
     #WIN.blit(PLUSFIVE, (280, 60))
@@ -129,15 +146,15 @@ def draw_window(pazaakGame: PazaakState) -> None:
     #WIN.blit(PLUSFIVE, (280, 350))
 
 
-    WIN.blit(PLUSFIVE, (720, 60))
-    WIN.blit(PLUSFIVE, (630, 60))
-    WIN.blit(PLUSFIVE, (540, 60))
-    WIN.blit(PLUSFIVE, (720, 150))
-    WIN.blit(PLUSFIVE, (630, 150))
-    WIN.blit(PLUSFIVE, (540, 150))
-    WIN.blit(PLUSFIVE, (720, 240))
-    WIN.blit(PLUSFIVE, (630, 240))
-    WIN.blit(PLUSFIVE, (540, 240))
+    #WIN.blit(PLUSFIVE, (720, 60))
+    #WIN.blit(PLUSFIVE, (630, 60))
+    #WIN.blit(PLUSFIVE, (540, 60))
+    #WIN.blit(PLUSFIVE, (720, 150))
+    #WIN.blit(PLUSFIVE, (630, 150))
+    #WIN.blit(PLUSFIVE, (540, 150))
+    #WIN.blit(PLUSFIVE, (720, 240))
+    #WIN.blit(PLUSFIVE, (630, 240))
+    #WIN.blit(PLUSFIVE, (540, 240))
 
     WIN.blit(PLUSFIVE, (810, 350))
     WIN.blit(PLUSFIVE, (720, 350))
@@ -164,7 +181,7 @@ def main() -> None:
 
 
     j: int = 0
-    k: int = 1
+    k: int = 2
     p1wins: int = 0
     p2wins: int = 0
     pazaakGame = PazaakState(k)
@@ -180,10 +197,15 @@ def main() -> None:
     while run:
         clock.tick(FPS)
         nextCard: int = pazaakGame.nextCard()
-
+        if k == 1: k = 2
+        elif k == 2: k = 1
+        pazaakGame.player = k
         if pazaakGame.player == 1:
             pazaakGame.P1boardCards.append(nextCard)
             pazaakGame.P1setVal += nextCard
+        if pazaakGame.player == 2:
+            pazaakGame.P2boardCards.append(nextCard)
+            pazaakGame.P2setVal += nextCard
         draw_window(pazaakGame)
 
         # time.sleep(3)
@@ -209,6 +231,12 @@ def main() -> None:
                         if card[0] <= int(MOUSE_X) and int(MOUSE_X) <= card[0] + 80:
                             if card[1] <= int(MOUSE_Y) and int(MOUSE_Y) <= card[1] + 80:
                                 SIDE_DECK_DIS.pop(i)
+                                card = pazaakGame.P1sideCards.pop(i)
+                                pazaakGame.P1boardCards.append(card[0])
+                                print(pazaakGame.P1setVal, "   ", card[0])
+
+                                pazaakGame.P1setVal += card[0]
+                                print(pazaakGame.P1setVal)
                                 run2 = False
 
                         i += 1
