@@ -3,6 +3,8 @@ import time
 
 from typing import Any, Callable, List, Optional, Tuple
 
+import pygame
+
 STAND: str = "stand"
 YES: str = "yes"
 
@@ -184,6 +186,8 @@ def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
     return None
 
 def player1_move(pazaakGame: PazaakState) -> None:
+
+    '''
     p1input: Optional[Any] = input("Enter input: " )
     poppedCard: int = 0
 
@@ -249,7 +253,7 @@ def player1_move(pazaakGame: PazaakState) -> None:
     print(p1input)
     #pazaakGame.display()
 
-
+    '''
     return None
 
 def player1_human(pazaakGame: PazaakState, nextCard: int) -> None:
@@ -263,7 +267,9 @@ def player1_human(pazaakGame: PazaakState, nextCard: int) -> None:
     pazaakGame.player = 2 
     return None
 
-def main() -> None:
+
+
+def pazaak_main(event: pygame) -> bool:
     j: int = 0
     k: int = 2
     p1wins: int = 0
@@ -274,11 +280,17 @@ def main() -> None:
     pazaakGame.createSideDeck(pazaakGame.P2sideCards)
     #while j < 100000:
     while (p1wins < 3) and (p2wins < 3):
+
         if k == 1: k = 2
         elif k == 2: k = 1
         pazaakGame.player = k
         endCond: int = 0
         while endCond == 0:
+
+            if event.type == pygame.QUIT:
+                return False
+
+
             pazaakGame.display()
 
             nextCard: int = pazaakGame.nextCard()
@@ -297,12 +309,14 @@ def main() -> None:
             elif endCond == -1: 
                 pazaakGame.ties+=1
                 ties += 1
+        time.sleep(5)
         pazaakGame.reset()
-        j += 1
+    j += 1
     print("p1wins: ", p1wins)
     print("p2wins: ", p2wins)
     print("ties: ", ties)
-    return None
+    #exit(0)
+    return False
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+#    main()
