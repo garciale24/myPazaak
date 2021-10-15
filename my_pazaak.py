@@ -156,15 +156,15 @@ def player2_playSideCard(pazaakGame: PazaakState, i: int, j: int) -> int:
             pazaakGame.P2stillPlaying = 0
             return 1
     return 0
-
+'''
 def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
     i: int = 0
     poppedCard: int = 0
     index: int = 0
     lencond: int = len(pazaakGame.P2sideCards)
     if pazaakGame.P2stillPlaying == 1:
-        pazaakGame.P2boardCards.append(nextCard)
-        pazaakGame.P2setVal += nextCard
+        #pazaakGame.P2boardCards.append(nextCard)
+        #pazaakGame.P2setVal += nextCard
         if pazaakGame.P2setVal == 20: 
             pazaakGame.P2stillPlaying = 0
             return None
@@ -184,7 +184,7 @@ def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
                     break
     pazaakGame.player = 1 
     return None
-
+'''
 def player1_move(pazaakGame: PazaakState) -> None:
 
     '''
@@ -296,7 +296,7 @@ def pazaak_main(event: pygame) -> bool:
             nextCard: int = pazaakGame.nextCard()
 
             if pazaakGame.player == 1: player1_human(pazaakGame, nextCard)
-            elif pazaakGame.player == 2: player2_AI(pazaakGame, nextCard)
+            #elif pazaakGame.player == 2: player2_AI(pazaakGame, nextCard)
             pazaakGame.display()
 
             endCond = pazaakGame.whoWon()
