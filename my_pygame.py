@@ -24,7 +24,7 @@ pygame.display.set_caption("my_Pazaak")
 BLUEISH: Tuple = (52, 122, 235)
 BLACK: Tuple = (0, 0, 0)
 RED: Tuple = (180, 20, 5)
-FPS: int = 60
+FPS: int = 1
 
 PLUS5: pygame = pygame.image.load(os.path.join('5card.png'))
 PLUSFIVE: pygame = pygame.transform.scale(PLUS5, (80, 80))
@@ -204,7 +204,14 @@ def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
             pazaakGame.P2stillPlaying = 0
             return None
         if monte_carlo_algorithm(pazaakGame) != 1:
-            if pazaakGame.P2setVal >= 18: pazaakGame.P2stillPlaying = 0
+            if pazaakGame.P2setVal >= 18: 
+                pazaakGame.P2stillPlaying = 0
+            if pazaakGame.P2setVal > pazaakGame.P1setVal:
+                print("yoooooo")
+                if pazaakGame.P1stillPlaying == 0: 
+                    print("wtf")
+                    pazaakGame.P2stillPlaying == 0
+                    return None
             while i < lencond:
                 i += 1
                 if player2_playSideCard(pazaakGame, i-1, index) == 1: 
@@ -245,6 +252,8 @@ def main() -> None:
 
     while run:
         clock.tick(FPS)
+
+        
         nextCard: int = pazaakGame.nextCard()
         if k == 1 and pazaakGame.P2stillPlaying == 1: k = 2
         elif k == 2 and pazaakGame.P1stillPlaying == 1: k = 1
@@ -257,20 +266,25 @@ def main() -> None:
             pazaakGame.P2boardCards.append(nextCard)
             pazaakGame.P2setVal += nextCard
         # time.sleep(3)a
-        if pazaakGame.whoWon() == 1 and pazaakGame.P2stillPlaying == 0 and pazaakGame.P1stillPlaying == 0:
+        if pazaakGame.whoWon() == 1:
             print("p1 won")
             break
-        if pazaakGame.whoWon() == 2 and pazaakGame.P2stillPlaying == 0 and pazaakGame.P1stillPlaying == 0:
+        if pazaakGame.whoWon() == 2:
             print("p2 won")
             break
+        if pazaakGame.whoWon() == -1:
+            print("tie")
+            break
+        for event in pygame.event.get():
+            run = quit_game(event)
         if pazaakGame.player == 2:
-                #time.sleep(1)
             player2_AI(pazaakGame, 0)
             run2 = False
         else:
             run2 = True
         draw_window(pazaakGame)
-        
+        for event in pygame.event.get():
+            run = quit_game(event)
         while run2: 
             for event in pygame.event.get():
                 #time.sleep(1)
@@ -315,7 +329,8 @@ def main() -> None:
 
         #time.sleep(2)
         draw_window(pazaakGame)
-
+    draw_window(pazaakGame)
+    time.sleep(5)
     pygame.quit()
 
     return None
