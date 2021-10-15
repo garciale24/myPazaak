@@ -24,55 +24,58 @@ pygame.display.set_caption("my_Pazaak")
 BLUEISH: Tuple = (52, 122, 235)
 BLACK: Tuple = (0, 0, 0)
 RED: Tuple = (180, 20, 5)
-FPS: int = 1
+FPS: int = 60
 
 PLUS5: pygame = pygame.image.load(os.path.join('5card.png'))
-PLUSFIVE: pygame = pygame.transform.scale(PLUS5, (80, 80))
+PLUSFIVE: pygame = pygame.transform.scale(PLUS5, (52, 60))
+
+BACKG: pygame = pygame.image.load(os.path.join('B.jpg'))
+#BG: pygame = pygame.transform.scale(BACKG, (900, 80))
 
 MOUSE_X: int = 0
 MOUSE_Y: int = 0
 
 P2_BOARD_DIS: List[Tuple[int]] = [
-    (720, 60),
-    (630, 60),
-    (540, 60),
-    (720, 150),
-    (630, 150),
-    (540, 150),
-    (720, 240),
-    (630, 240),
-    (540, 240)
+    (536, 101),
+    (647, 101),
+    (760, 101),
+    (536, 184),
+    (647, 184),
+    (760, 184),
+    (536, 270),
+    (647, 270),
+    (760, 270)
 ]
 
 P1_BOARD_DIS: List[Tuple[int]] = [
-    (100, 60),
-    (190, 60),
-    (280, 60),
-    (100, 150),
-    (190, 150),
-    (280, 150),
-    (100, 240),
-    (190, 240),
-    (280, 240),
+    (88, 101),
+    (200, 101),
+    (311, 101),
+    (88, 184),
+    (200, 184),
+    (311, 184),
+    (88, 270),
+    (200, 270),
+    (311, 270),
 ]
 
 
 SIDE_DECK_DIS: List[Tuple[int]] = [
-    (10, 350),
-    (100, 350),
-    (190, 350),
-    (280, 350)]
+    (153, 367),
+    (250, 367),
+    (355, 367),
+    (45, 367)]
 
 SIDE_DECK_DIS2: List[Tuple[int]] = [
-    (810, 350),
-    (720, 350),
-    (630, 350),
-    (540, 350)]
+    (494, 367),
+    (599, 367),
+    (696, 367),
+    (802, 367)]
 
 def get_card(nextCard: int) ->  pygame:
     if nextCard < 100:
         P5: pygame = pygame.image.load(os.path.join('5card.png'))
-        PFIVE: pygame = pygame.transform.scale(P5, (80, 80))
+        PFIVE: pygame = pygame.transform.scale(P5, (52, 60))
     return PFIVE
 
 def draw_window(pazaakGame: PazaakState) -> None:
@@ -80,37 +83,49 @@ def draw_window(pazaakGame: PazaakState) -> None:
 
 
 
-    WIN.fill(BLUEISH)
+    #WIN.fill(BLUEISH)
+    WIN.blit(BACKG, (0, 0))
+
 
     #time.sleep(10)
 
     font = pygame.font.Font("times.ttf", 32)
     #time.sleep(10)
 
-    img = font.render('Player 1: Human', True, BLACK)
-    WIN.blit(img, (20, 20))
+    img = font.render('Player 1', True, BLUEISH)
+    WIN.blit(img, (63, 10))
 
-    img1 = font.render('Player 1 Set Total: ' + str(pazaakGame.P1setVal), True, BLACK)
-    WIN.blit(img1, (20, 440))
+    img1 = font.render(str(pazaakGame.P1setVal), True, BLUEISH)
+    WIN.blit(img1, (400, 10))
 
-    img2 = font.render('Player 2: A.I.', True, BLACK)
-    WIN.blit(img2, (470, 20))
-    img2_1 = font.render('Player 2 Set Total: ' + str(pazaakGame.P2setVal), True, BLACK)
-    WIN.blit(img2_1, (470, 440))
+    img2 = font.render('Player 2', True, BLUEISH)
+    WIN.blit(img2, (732, 10))
 
-    radius = 15
-    pygame.draw.circle(WIN, RED, (50, 135), radius)
-    pygame.draw.circle(WIN, RED, (50, 180), radius)
-    pygame.draw.circle(WIN, RED, (50, 225), radius)
+    img2_1 = font.render(str(pazaakGame.P2setVal), True, BLUEISH)
+    WIN.blit(img2_1, (465, 10))
 
-    pygame.draw.circle(WIN, RED, (850, 135), radius)
-    pygame.draw.circle(WIN, RED, (850, 180), radius)
-    pygame.draw.circle(WIN, RED, (850, 225), radius)
+    radius = 10
+    pygame.draw.circle(WIN, RED, (253, 24), radius)
+    pygame.draw.circle(WIN, RED, (308, 24), radius)
+    pygame.draw.circle(WIN, RED, (365, 24), radius)
+
+    pygame.draw.circle(WIN, RED, (537, 24), radius)
+    pygame.draw.circle(WIN, RED, (593, 24), radius)
+    pygame.draw.circle(WIN, RED, (649, 24), radius)
+
+    
+    ET: pygame = pygame.image.load(os.path.join('ET.png'))
+    E: pygame = pygame.transform.scale(ET, (140, 50))
+    WIN.blit(E, (380, 150))
+
+    ET2: pygame = pygame.image.load(os.path.join('ET.png'))
+    E2: pygame = pygame.transform.scale(ET2, (140, 50))
+    WIN.blit(E2, (380, 250))
 
     pygame.draw.line(WIN, BLACK, (450, 150), (450, 5), 5)
 
     font = pygame.font.Font(None, 40)
-    text = font.render("End Turn", True, BLACK)
+    text = font.render("End Turn", True, BLUEISH)
     text_rect = text.get_rect(center=(450, 175))
     WIN.blit(text, text_rect)
 
@@ -119,23 +134,24 @@ def draw_window(pazaakGame: PazaakState) -> None:
     pygame.draw.line(WIN, BLACK, (380, 200), (520, 200), 5)
     pygame.draw.line(WIN, BLACK, (520, 150), (520, 200), 5)
 
-    pygame.draw.line(WIN, BLACK, (450, 200), (450, 300), 5)
+    pygame.draw.line(WIN, BLACK, (450, 200), (450, 250), 5)
 
     font2 = pygame.font.Font(None, 40)
-    text2 = font2.render("Stand", True, BLACK)
-    text_rect2 = text2.get_rect(center=(450, 325))
+    text2 = font2.render("Stand", True, BLUEISH)
+    text_rect2 = text2.get_rect(center=(450, 275))
     WIN.blit(text2, text_rect2)
-    pygame.draw.line(WIN, BLACK, (380, 350), (520, 350), 5)
-    pygame.draw.line(WIN, BLACK, (380, 300), (380, 350), 5)
     pygame.draw.line(WIN, BLACK, (380, 300), (520, 300), 5)
-    pygame.draw.line(WIN, BLACK, (520, 300), (520, 350), 5)
+    pygame.draw.line(WIN, BLACK, (380, 250), (380, 300), 5)
+    pygame.draw.line(WIN, BLACK, (380, 250), (520, 250), 5)
+    pygame.draw.line(WIN, BLACK, (520, 250), (520, 300), 5)
 
-    pygame.draw.line(WIN, BLACK, (450, 495), (450, 350), 5)
+    pygame.draw.line(WIN, BLACK, (450, 495), (450, 300), 5)
 
 
 
     i = 0
     while i < len(pazaakGame.P1boardCards):
+        card: pygame = None
         card = get_card(pazaakGame.P1boardCards[i])
         WIN.blit(card, (P1_BOARD_DIS[i]))
         i += 1
@@ -259,12 +275,7 @@ def main() -> None:
         elif k == 2 and pazaakGame.P1stillPlaying == 1: k = 1
         pazaakGame.player = k
 
-        if pazaakGame.player == 1 and pazaakGame.P1stillPlaying == 1:
-            pazaakGame.P1boardCards.append(nextCard)
-            pazaakGame.P1setVal += nextCard
-        if pazaakGame.player == 2 and pazaakGame.P2stillPlaying == 1:
-            pazaakGame.P2boardCards.append(nextCard)
-            pazaakGame.P2setVal += nextCard
+
         # time.sleep(3)a
         if pazaakGame.whoWon() == 1:
             print("p1 won")
@@ -275,6 +286,13 @@ def main() -> None:
         if pazaakGame.whoWon() == -1:
             print("tie")
             break
+
+        if pazaakGame.player == 1 and pazaakGame.P1stillPlaying == 1:
+            pazaakGame.P1boardCards.append(nextCard)
+            pazaakGame.P1setVal += nextCard
+        if pazaakGame.player == 2 and pazaakGame.P2stillPlaying == 1:
+            pazaakGame.P2boardCards.append(nextCard)
+            pazaakGame.P2setVal += nextCard
         for event in pygame.event.get():
             run = quit_game(event)
         if pazaakGame.player == 2:
@@ -300,14 +318,14 @@ def main() -> None:
                     
                     #pazaak_main()
 
-                    #print(MOUSE_X, MOUSE_Y)
+                    print(MOUSE_X, MOUSE_Y)
 
     
                     i = 0
                     if pazaakGame.P1stillPlaying == 1:
                         for card in SIDE_DECK_DIS:
-                            if card[0] <= int(MOUSE_X) and int(MOUSE_X) <= card[0] + 80:
-                                if card[1] <= int(MOUSE_Y) and int(MOUSE_Y) <= card[1] + 80:
+                            if card[0] <= int(MOUSE_X) and int(MOUSE_X) <= card[0] + 52:
+                                if card[1] <= int(MOUSE_Y) and int(MOUSE_Y) <= card[1] + 60:
                                     SIDE_DECK_DIS.pop(i)
                                     card = pazaakGame.P1sideCards.pop(i)
                                     pazaakGame.P1boardCards.append(card[0])
@@ -316,10 +334,12 @@ def main() -> None:
                                     pazaakGame.P1setVal += card[0]
                                     print(pazaakGame.P1setVal)
                                     draw_window(pazaakGame)
+                                    run2 = False
+                                    break
 
                             i += 1
                     if int(MOUSE_X) <= 520 and int(MOUSE_X) >= 380:
-                        if int(MOUSE_Y) <= 350 and int(MOUSE_Y) >= 300:
+                        if int(MOUSE_Y) <= 300 and int(MOUSE_Y) >= 250:
                             # print('wut')
                             if k == 1:
                                 pazaakGame.P1stillPlaying = 0
@@ -330,7 +350,7 @@ def main() -> None:
         #time.sleep(2)
         draw_window(pazaakGame)
     draw_window(pazaakGame)
-    time.sleep(5)
+    #time.sleep(5)
     pygame.quit()
 
     return None
