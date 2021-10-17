@@ -24,10 +24,10 @@ def player2_AI(pazaakGame: PazaakState, nextCard: int) -> bool:
             pazaakGame.P2stillPlaying = 0
             return True
         if monte_carlo_algorithm(pazaakGame) != 1:
-            if pazaakGame.P2setVal >= 18 and pazaakGame.P2setVal <= 20: 
+            if pazaakGame.P2setVal >= 18 and pazaakGame.P2setVal <= 20 and pazaakGame.P1stillPlaying == 1 and pazaakGame.P1setVal <= pazaakGame.P2setVal: 
                 pazaakGame.P2stillPlaying = 0
             if pazaakGame.P2setVal > pazaakGame.P1setVal:
-                if pazaakGame.P1stillPlaying == 0: 
+                if pazaakGame.P1stillPlaying == 0 and pazaakGame.P2setVal <= 20: 
                     pazaakGame.P2stillPlaying == 0
                     return True
             i = 0
@@ -108,7 +108,7 @@ def main() -> None:
     while (pazaakGame.P1gamesWon < 3) and (pazaakGame.P2gamesWon < 3) and exxxit:
         pazaakGame.reset()
         i = 0
-        pazaakGame.P2setVal = 19
+        #pazaakGame.P2setVal = 19
 
         run = run2 = pick_card = True
 
@@ -127,9 +127,9 @@ def main() -> None:
             nextCard: int = pazaakGame.nextCard()
             print(k)
             if rounds_flag == 0:
-                if k == 1: 
+                if k == 1 and pazaakGame.P2stillPlaying == 1: 
                     k = 2
-                elif k == 2: 
+                elif k == 2 and pazaakGame.P1stillPlaying == 1: 
                     k = 1
                 pazaakGame.player = k
             else:
