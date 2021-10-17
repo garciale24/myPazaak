@@ -32,6 +32,8 @@ class PazaakState:
             lambda sideDeck: PazaakState._side_card_pop(sideDeck)
         self.P1setVal: int = 0
         self.P2setVal: int = 0
+        self.P2setValTemp: int = 0
+
         self.util: Callable[[int, int], PazaakState] = \
             lambda: PazaakState._get_utility(self.P1stillPlaying, self.P2stillPlaying)
         #self.traverse: Callable[[int], PazaakState] = \
@@ -51,6 +53,8 @@ class PazaakState:
         self.P2boardCards = []
         self.P1setVal = 0
         self.P2setVal = 0
+        self.P2setValTemp= 0
+
         return None
 
     @staticmethod
@@ -61,10 +65,10 @@ class PazaakState:
         while i < 4:
             randint = 0
             randint2 = 0
-            while randint == 0: randint = random.randrange(-5, 5) 
+            while randint == 0: randint = random.randrange(-5, 0) 
             while randint2 == 0: randint2 = random.randrange(-10, 10)
-            if randint2 == randint: sideCards.append([randint, -1*randint])
-            else: sideCards.append([randint, randint])
+            if randint2 == randint and randint != 0: sideCards.append([randint, -1*randint])
+            elif randint != 0 and randint != randint2: sideCards.append([randint, randint])
             i += 1
         return None
         
@@ -149,111 +153,16 @@ def monte_carlo_algorithm(pazaakGame: PazaakState) -> int:
 
 def player2_playSideCard(pazaakGame: PazaakState, i: int, j: int) -> int:
     val: int = 0
+    print(len(pazaakGame.P2sideCards), i, j)
     val = pazaakGame.P2sideCards[i][j] + pazaakGame.P2setVal
     if val >= 18 and val <= 20:
         if val > pazaakGame.P2setVal or pazaakGame.P2setVal > 20:
-            pazaakGame.P2setVal = val
-            pazaakGame.P2stillPlaying = 0
+            pazaakGame.P2setValTemp = val
+            #pazaakGame.P2stillPlaying = 0
             return 1
     return 0
-'''
-def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
-    i: int = 0
-    poppedCard: int = 0
-    index: int = 0
-    lencond: int = len(pazaakGame.P2sideCards)
-    if pazaakGame.P2stillPlaying == 1:
-        #pazaakGame.P2boardCards.append(nextCard)
-        #pazaakGame.P2setVal += nextCard
-        if pazaakGame.P2setVal == 20: 
-            pazaakGame.P2stillPlaying = 0
-            return None
-        if monte_carlo_algorithm(pazaakGame) != 1:
-            if pazaakGame.P2setVal >= 18: pazaakGame.P2stillPlaying = 0
-            while i < lencond:
-                i += 1
-                if player2_playSideCard(pazaakGame, i-1, index) == 1: 
-                    poppedCard = pazaakGame.P2sideCards.pop(i-1)
-                    pazaakGame.P2boardCards.append(poppedCard[index])
-                    break
-                index = 1
-                if pazaakGame.P2sideCards[i-1][0] == pazaakGame.P2sideCards[i-1][1]: continue
-                if player2_playSideCard(pazaakGame, i-1, index) == 1: 
-                    poppedCard = pazaakGame.P2sideCards.pop(i-1)
-                    pazaakGame.P2boardCards.append(poppedCard[index])
-                    break
-    pazaakGame.player = 1 
-    return None
-'''
+
 def player1_move(pazaakGame: PazaakState) -> None:
-
-    '''
-    p1input: Optional[Any] = input("Enter input: " )
-    poppedCard: int = 0
-
-
-    if str(p1input) == STAND: pazaakGame.P1stillPlaying = 0
-    elif p1input == "": return None
-    elif int(p1input) == -1:
-        val = pazaakGame.P1sideCards[0][1] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(0)
-        pazaakGame.P1boardCards.append(poppedCard[1])
-    elif int(p1input) == 1:
-        val = pazaakGame.P1sideCards[0][0] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(0)
-        pazaakGame.P1boardCards.append(poppedCard[0])
-    elif int(p1input) == -2:
-        val = pazaakGame.P1sideCards[1][1] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(1)
-        pazaakGame.P1boardCards.append(poppedCard[1])
-    elif int(p1input) == 2:
-        val = pazaakGame.P1sideCards[1][0] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(1)
-        pazaakGame.P1boardCards.append(poppedCard[0])
-    elif int(p1input) == -3:
-        val = pazaakGame.P1sideCards[2][1] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(2)
-        pazaakGame.P1boardCards.append(poppedCard[1])
-    elif int(p1input) == 3:
-        val = pazaakGame.P1sideCards[2][0] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(2)
-        pazaakGame.P1boardCards.append(poppedCard[0])
-    elif int(p1input) == -4:
-        val = pazaakGame.P1sideCards[3][1] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(3)
-        pazaakGame.P1boardCards.append(poppedCard[1])
-    elif int(p1input) == 4:
-        val = pazaakGame.P1sideCards[3][0] + pazaakGame.P1setVal
-        pazaakGame.P1setVal = val
-        p1input2: Optional[Any] = input("stand?: (yes/no)" )
-        if p1input2 == YES: pazaakGame.P1stillPlaying = 0
-        poppedCard = pazaakGame.P1sideCards.pop(3)
-        pazaakGame.P1boardCards.append(poppedCard[0])
-    print(p1input)
-    #pazaakGame.display()
-
-    '''
     return None
 
 def player1_human(pazaakGame: PazaakState, nextCard: int) -> None:
@@ -269,6 +178,22 @@ def player1_human(pazaakGame: PazaakState, nextCard: int) -> None:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def pazaak_main(event: pygame) -> bool:
     j: int = 0
     k: int = 2
@@ -278,7 +203,6 @@ def pazaak_main(event: pygame) -> bool:
     pazaakGame = PazaakState(k)
     pazaakGame.createSideDeck(pazaakGame.P1sideCards)
     pazaakGame.createSideDeck(pazaakGame.P2sideCards)
-    #while j < 100000:
     while (p1wins < 3) and (p2wins < 3):
 
         if k == 1: k = 2
