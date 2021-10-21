@@ -125,6 +125,38 @@ class PazaakState:
             if p1sv < p2sv: return 2
         return 0
 
+
+def player2_playSideCard(pazaakGame: PazaakState, i: int, j: int) -> int:
+    val: int = 0
+    print(len(pazaakGame.P2sideCards), i, j)
+    val = pazaakGame.P2sideCards[i][j] + pazaakGame.P2setVal
+    if val >= 18 and val <= 20:
+        if val > pazaakGame.P2setVal or pazaakGame.P2setVal > 20:
+            pazaakGame.P2setValTemp = val
+            #pazaakGame.P2stillPlaying = 0
+            return 1
+    return 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def player1_human_auto(pazaakGame: PazaakState, nextCard: int) -> None:
     if pazaakGame.P1stillPlaying == 1:
         pazaakGame.P1boardCards.append(nextCard)
@@ -151,16 +183,6 @@ def player2_AI_auto(pazaakGame: PazaakState, nextCard: int) -> None:
 def monte_carlo_algorithm(pazaakGame: PazaakState) -> int:
     return 0
 
-def player2_playSideCard(pazaakGame: PazaakState, i: int, j: int) -> int:
-    val: int = 0
-    print(len(pazaakGame.P2sideCards), i, j)
-    val = pazaakGame.P2sideCards[i][j] + pazaakGame.P2setVal
-    if val >= 18 and val <= 20:
-        if val > pazaakGame.P2setVal or pazaakGame.P2setVal > 20:
-            pazaakGame.P2setValTemp = val
-            #pazaakGame.P2stillPlaying = 0
-            return 1
-    return 0
 
 def player1_move(pazaakGame: PazaakState) -> None:
     return None
@@ -175,22 +197,6 @@ def player1_human(pazaakGame: PazaakState, nextCard: int) -> None:
         else: player1_move(pazaakGame)
     pazaakGame.player = 2 
     return None
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
