@@ -65,7 +65,7 @@ class PazaakState:
         while i < 4:
             randint = 0
             randint2 = 0
-            while randint == 0: randint = random.randrange(-5, 0) 
+            while randint == 0: randint = random.randrange(-5, 5) 
             while randint2 == 0: randint2 = random.randrange(-10, 10)
             if randint2 == randint and randint != 0: sideCards.append([randint, -1*randint])
             elif randint != 0 and randint != randint2: sideCards.append([randint, randint])
