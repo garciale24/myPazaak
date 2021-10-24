@@ -44,6 +44,21 @@ class PazaakState:
         self.nextCard: Callable[[], PazaakState] = \
             lambda: PazaakState._next_card()
 
+    def makeChild(self) -> "PazaakState":
+        new_state: PazaakState = PazaakState(2)
+        new_state.player = self.player
+        new_state.P1gamesWon = self.P1gamesWon
+        new_state.P2gamesWon = self.P2gamesWon
+        new_state.P1stillPlaying = self.P1stillPlaying
+        new_state.P2stillPlaying = self.P2stillPlaying
+        new_state.P1boardCards = self.P1boardCards
+        new_state.P2boardCards = self.P2boardCards
+        new_state.P1sideCards = self.P1sideCards
+        new_state.P2sideCards = self.P2sideCards
+        new_state.P1setVal = self.P1setVal
+        new_state.P2setVal = self.P2setVal
+        return new_state
+
     def reset(self) -> None:
         self.moves = None
         self.selected = -1
@@ -180,8 +195,8 @@ def player2_AI_auto(pazaakGame: PazaakState, nextCard: int) -> None:
     pazaakGame.player = 1 
     return None
 
-def monte_carlo_algorithm(pazaakGame: PazaakState) -> int:
-    return 0
+#def monte_carlo_algorithm(pazaakGame: PazaakState) -> int:
+#    return 0
 
 
 def player1_move(pazaakGame: PazaakState) -> None:
