@@ -5,13 +5,25 @@ class RootKids:
         self.move = move
         self.state = pazaakGame
         self.wins = 0
-        self.loses = 0
+        self.games = 0
 
 def monte_carlo_algorithm(pazaakGame: PazaakState) -> int:
     print("monteCarloAlgo")
-    expansion(pazaakGame)
-    simulation()
-    backpropagation()
+    kidsList: List[RootKids] = expansion(pazaakGame)
+    kid: RootKids = RootKids(pazaakGame, 0)
+    i: int = 0
+    while i < 1000:
+        for kidy in kidsList:
+            kid = simulation(kidy)
+            kid = backpropagation(kid)
+            kidy.state.P1setVal = pazaakGame.P1setVal
+            kidy.state.P2setVal = pazaakGame.P2setVal
+            kidy.state.P1stillPlaying = pazaakGame.P1stillPlaying
+            kidy.state.P2stillPlaying = pazaakGame.P2stillPlaying
+            kidy.state.player = pazaakGame.player
+        i += 1
+    for kidy in kidsList: 
+        print(kidy.move, kidy.wins / kidy.games)
     return 0
 
 def doMove(pazaakGame: PazaakState, move: int) -> PazaakState:
@@ -167,10 +179,39 @@ def expansion(pazaakGame: PazaakState) -> List[RootKids]:
     return childs
 
 # function to simulate children and retur
-def simulation() -> None:
+def simulation(child: RootKids) -> RootKids:
     print("simulate")
-    return None
+    nextCard: int = 0
+    while child.state.P1stillPlaying == 1 and child.state.P2stillPlaying == 1:
 
-def backpropagation() -> None:
+        if child.state.player == 1 and child.state.P2stillPlaying == 1:
+            child.state.player = 2
+        elif child.state.player == 2 and child.state.P1stillPlaying == 1:
+            child.state.player = 1
+        print(child.state.player)
+        nextCard = child.state.nextCard()
+
+        if child.state.player == 1:
+            child.state.P1setVal += nextCard
+        elif child.state.player == 2:
+            child.state.P2setVal += nextCard
+        print(nextCard, child.state.P1setVal, child.state.P2setVal)
+
+        if child.state.P1setVal >= 20:
+            child.state.P1stillPlaying == 0
+            break
+        elif child.state.P2setVal >= 20:
+            child.state.P2stillPlaying == 0
+            break
+
+    print(child.state.whoWon())
+    return child
+
+def backpropagation(child: RootKids) -> RootKids:
     print("backpropagate")
-    return None
+    winner: int = 0
+    winner = child.state.whoWon()
+    if winner == 1:
+        child.wins += 1
+    child.games += 1
+    return child
