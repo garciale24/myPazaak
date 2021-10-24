@@ -3,6 +3,7 @@ import pygame
 import os
 import time
 from my_pazaak import *
+from monteCarlo import *
 
 from draw_stuff import *
 from typing import List
@@ -36,6 +37,7 @@ def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
             bestidx = 0
             lencond = len(SIDE_DECK_DIS2)
             while i < lencond:
+
                 i += 1
                 if player2_playSideCard(pazaakGame, i-1, index) == 1: 
                     if pazaakGame.P2setVal > best:
@@ -47,6 +49,8 @@ def player2_AI(pazaakGame: PazaakState, nextCard: int) -> None:
                     if pazaakGame.P2setVal > best:
                         best = pazaakGame.P2setValTemp
                         bestidx = i
+
+                        
             if best != -1:
                 if pazaakGame.P1stillPlaying == 0:
                     if best > pazaakGame.P1setVal:
