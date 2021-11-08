@@ -5,7 +5,7 @@ import time
 from my_pygame import *
 from my_pazaak import *
 
-SIZE = 0.88
+SIZE = 1
 
 
 pygame.init()
