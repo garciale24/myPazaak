@@ -120,7 +120,7 @@ class PazaakState:
         return 3
 
     @staticmethod
-    def _check_win(util: int, p1sv: int, p2sv) -> int:
+    def _check_win(util: int, p1sv: int, p2sv) :
         if util == 3:
             if p2sv > 20: return 1
             if p1sv > 20: return 2
@@ -133,11 +133,23 @@ class PazaakState:
         elif util == 1:
             if p1sv > 20: return 2
             if p2sv > 20: return 1
-            if p1sv > p2sv: return 1            
+            if p1sv > p2sv: return 1   
+
+
+
+            #if p1sv < p2sv: return 2
+         
         elif util == 2:
+            #print("here")
+            #pygame.quit()
+            #exit()
             if p2sv > 20: return 1
             if p1sv > 20: return 2
             if p1sv < p2sv: return 2
+
+
+            #if p1sv > p2sv: return 1            
+
         return 0
 
 
